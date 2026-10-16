@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 转 APNG 工具 | 在线转换 & 下载</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(145deg, #0b0f1a 0%, #1a1f2f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            color: #e5e9f0;
+        }
+        .card {
+            background: rgba(22, 28, 45, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 2rem 2rem 2.2rem;
+            box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            width: 100%;
+            max-width: 720px;
+            transition: all 0.2s ease;
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(120deg, #b7c9ff, #88aaff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        h1 span {
+            font-size: 2rem;
+        }
+        .subhead {
+            font-size: 0.95rem;
+            color: #9aa4bf;
+            margin-bottom: 2rem;
+            border-left: 3px solid #4a6eff;
+            padding-left: 1rem;
+            background: linear-gradient(90deg, rgba(74, 110, 255, 0.12), transparent);
+            border-radius: 0 8px 8px 0;
+            line-height: 1.4;
+        }
+        .file-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: rgba(10, 15, 25, 0.6);
+            border: 2px dashed #3a4a6e;
+            border-radius: 1.5rem;
+            padding: 1.4rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #ccd6f0;
+            font-weight: 500;
+            text-align: center;
+        }
+        .file-label:hover {
+            border-color: #5f7fff;
+            background: rgba(30, 40, 65, 0.8);
+            color: white;
+        }
+        .file-label svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+            opacity: 0.8;
+        }
+        .file-label input[type="file"] {
+            display: none;
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0a0e17;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            color: #a0b0d0;
+            border: 1px solid #252e42;
+            word-break: break-all;
+        }
+        .file-info .name {
+            font-weight: 500;
+            color: #d0ddff;
+            max-width: 70%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .badge {
+            background: #1e2a44;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #8fa8ff;
+        }
+        .settings-panel {
+            background: #101624;
+            border-radius: 1.5rem;
+            padding: 1.3rem 1.3rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #242e44;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: flex-end;
+        }
+        .setting-item {
+            flex: 1 1 140px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .setting-item label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-weight: 600;
+            color: #8296b8;
+        }
+        .setting-item input, .setting-item select {
+            background: #0b0f18;
+            border: 1px solid #2b354b;
+            border-radius: 0.8rem;
+            padding: 0.6rem 1rem;
+            color: #f0f4ff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.2s;
+            width: 100%;
+            font-family: inherit;
+        }
+        .setting-item input:focus, .setting-item select:focus {
+            border-color: #4a6eff;
+        }
+        .setting-item input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .setting-item input[type="number"]::-webkit-outer-spin-button,
+        .setting-item input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .btn {
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.9rem 2rem;
+            border-radius: 2.5rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            font-family: inherit;
+            letter-spacing: 0.01em;
+            background: #212b3f;
+            color: #d3ddff;
+            flex: 1 1 auto;
+            border: 1px solid #2e3b55;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4a6eff, #3a5ae0);
+            color: white;
+            border: 1px solid #6b8aff;
+            box-shadow: 0 8px 18px -6px #1e3a8a;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #5f7fff, #4a6eff);
+            box-shadow: 0 10px 22px -6px #2a4ad0;
+            transform: scale(1.01);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #2a3450;
+            border-color: #3f4a66;
+        }
+        .btn-secondary {
+            background: #1d263b;
+            border: 1px solid #313f5c;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: #252f48;
+            border-color: #4f6290;
+        }
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 1.5rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            background: #0d1322;
+            border-left: 5px solid #4a6eff;
+            font-size: 0.9rem;
+            color: #b8c6e8;
+            transition: 0.2s;
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
+            word-break: break-word;
+        }
+        .status.error {
+            border-left-color: #ff5e7c;
+            background: #1a121f;
+            color: #ffb3c1;
+        }
+        .status.success {
+            border-left-color: #3dd68c;
+            background: #0f1a17;
+            color: #a5f0c0;
+        }
+        .preview-area {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .preview-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6a7fa0;
+            font-weight: 600;
+        }
+        .apng-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 1rem;
+            border: 1px solid #2e3d5c;
+            background: #0b0f1a;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+        .hidden {
+            display: none !important;
+        }
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #2b3b60;
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            color: #ccddff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            border: 1px solid #4f6290;
+            margin-top: 0.5rem;
+        }
+        .download-link:hover {
+            background: #3a4d7a;
+            color: white;
+        }
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+        .progress-text {
+            font-size: 0.85rem;
+            color: #8fa8ff;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>
+            <span>🎞️</span> MP4 → APNG
+        </h1>
+        <div class="subhead">
+            在浏览器中直接将 MP4 转换为 APNG 动图 · 可调节帧率与尺寸 · 下载保留动画
+        </div>
+
+        <!-- 文件选择区 -->
+        <div class="file-area">
+            <label class="file-label" for="mp4Input">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                <span>选择 MP4 文件</span>
+                <input type="file" id="mp4Input" accept="video/mp4,video/*">
+            </label>
+            <div class="file-info" id="fileInfo">
+                <span class="name" id="fileName">未选择文件</span>
+                <span class="badge" id="fileSize">0 MB</span>
+            </div>
+        </div>
+
+        <!-- 转换设置 -->
+        <div class="settings-panel">
+            <div class="setting-item">
+                <label>帧率 (FPS)</label>
+                <input type="number" id="fpsInput" value="10" min="1" max="30" step="1">
+            </div>
+            <div class="setting-item">
+                <label>最大宽度 (px)</label>
+                <input type="number" id="widthInput" value="320" min="16" max="1920" step="16">
+            </div>
+            <div class="setting-item">
+                <label>时长限制 (秒)</label>
+                <input type="number" id="durationInput" value="5" min="0.5" max="30" step="0.5">
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="convertBtn" disabled>
+                ✨ 转换为 APNG
+            </button>
+            <button class="btn btn-secondary" id="resetBtn">
+                ⟲ 重置
+            </button>
+        </div>
+
+        <!-- 状态信息 -->
+        <div class="status" id="statusMsg">
+            💡 等待选择 MP4 文件…
+        </div>
+
+        <!-- 预览与下载区 -->
+        <div class="preview-area hidden" id="previewArea">
+            <div class="preview-label">APNG 预览</div>
+            <img id="apngPreview" class="apng-preview" alt="APNG 预览">
+            <a id="downloadLink" class="download-link" download="animation.png" href="#">
+                ⬇️ 下载 APNG (PNG)
+            </a>
+        </div>
+    </div>
+
+    <script>
+        (function(){
+            // DOM 元素
+            const mp4Input = document.getElementById('mp4Input');
+            const fileNameEl = document.getElementById('fileName');
+            const fileSizeEl = document.getElementById('fileSize');
+            const fpsInput = document.getElementById('fpsInput');
+            const widthInput = document.getElementById('widthInput');
+            const durationInput = document.getElementById('durationInput');
+            const convertBtn = document.getElementById('convertBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const statusMsg = document.getElementById('statusMsg');
+            const previewArea = document.getElementById('previewArea');
+            const apngPreview = document.getElementById('apngPreview');
+            const downloadLink = document.getElementById('downloadLink');
+
+            // 当前选中的文件
+            let currentFile = null;
+            // 当前生成的 blob URL，用于释放
+            let currentApngUrl = null;
+            // 用于取消进行中的转换 (避免竞态)
+            let conversionId = 0;
+
+            // --- 工具函数 ---
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 MB';
+                const mb = bytes / (1024 * 1024);
+                return mb.toFixed(2) + ' MB';
+            }
+
+            function setStatus(text, type = 'info') {
+                statusMsg.textContent = text;
+                statusMsg.className = 'status';
+                if (type === 'error') statusMsg.classList.add('error');
+                if (type === 'success') statusMsg.classList.add('success');
+            }
+
+            // 清理之前生成的 apng URL
+            function revokeApngUrl() {
+                if (currentApngUrl) {
+                    URL.revokeObjectURL(currentApngUrl);
+                    currentApngUrl = null;
+                }
+                apngPreview.src = '#';
+                downloadLink.href = '#';
+                previewArea.classList.add('hidden');
+            }
+
+            // 重置所有状态
+            function resetAll() {
+                // 取消进行中的转换
+                conversionId++;
+                mp4Input.value = '';
+                currentFile = null;
+                fileNameEl.textContent = '未选择文件';
+                fileSizeEl.textContent = '0 MB';
+                convertBtn.disabled = true;
+                revokeApngUrl();
+                setStatus('💡 等待选择 MP4 文件…');
+                // 恢复默认设置（可选）
+                fpsInput.value = '10';
+                widthInput.value = '320';
+                durationInput.value = '5';
+            }
+
+            // 检查是否可以启用转换按钮
+            function updateConvertButton() {
+                convertBtn.disabled = !(currentFile && currentFile.type.startsWith('video/'));
+            }
+
+            // --- 文件选择处理 ---
+            mp4Input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) {
+                    resetAll();
+                    return;
+                }
+
+                // 简单校验视频类型
+                if (!file.type.startsWith('video/')) {
+                    setStatus('❌ 请选择有效的视频文件（MP4/WebM等）', 'error');
+                    currentFile = null;
+                    fileNameEl.textContent = file.name;
+                    fileSizeEl.textContent = formatFileSize(file.size);
+                    convertBtn.disabled = true;
+                    revokeApngUrl();
+                    return;
+                }
+
+                currentFile = file;
+                fileNameEl.textContent = file.name;
+                fileSizeEl.textContent = formatFileSize(file.size);
+                revokeApngUrl();
+                setStatus(`📁 已选择: ${file.name}  准备转换`, 'info');
+                updateConvertButton();
+            });
+
+            // --- 核心转换逻辑: MP4 -> APNG (基于 WebCodecs + PNG 编码) ---
+            // 说明: 使用 VideoDecoder 解码 MP4 帧，然后借助 Canvas 和 UPNG.js (内联轻量方案) 生成 APNG。
+            // 由于没有外部依赖，这里采用纯前端逐帧生成 PNG 再合成 APNG 的方式（简易但有效，性能受限于帧数）。
+            // 为了更好的兼容性，我们使用 MediaStream + video 元素 捕获帧的方式（不依赖 WebCodecs）。
+            // 但更通用的方法是使用 video 元素 + canvas 逐帧绘制，然后合成 APNG。
+            // 由于需要生成真正的 APNG，采用 UPNG 库的简化版本(动态加载)？但为了完全自包含，我们使用一个轻量级 APNG 编码器实现。
+            // 但是纯手写 APNG 编码比较复杂，考虑到实际可用性，这里使用 CDN 加载 upng-js 库 (若网络不通则降级)。
+            // 为了确保代码可用，我们动态加载 upng-js。如果加载失败，提示用户。
+            // 更好的方式是打包，但作为纯 HTML 演示，使用 CDN 是常见做法。
+
+            // 异步加载 UPNG 库
+            let upngLoaded = false;
+            let upngLoadPromise = null;
+
+            function loadUPNG() {
+                if (upngLoaded) return Promise.resolve();
+                if (upngLoadPromise) return upngLoadPromise;
+
+                upngLoadPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/upng-js@2.1.0/UPNG.min.js';
+                    script.onload = () => {
+                        if (window.UPNG) {
+                            upngLoaded = true;
+                            resolve();
+                        } else {
+                            reject(new Error('UPNG 加载后未找到全局变量'));
+                        }
+                    };
+                    script.onerror = () => reject(new Error('无法加载 UPNG 库，请检查网络'));
+                    document.head.appendChild(script);
+                });
+                return upngLoadPromise;
+            }
+
+            // 从视频中捕获帧并生成 APNG
+            async function convertToAPNG(file, fps, maxWidth, maxDurationSec) {
+                // 加载 UPNG 库
+                try {
+                    await loadUPNG();
+                } catch (err) {
+                    throw new Error('APNG 编码库加载失败，请刷新或检查网络。' + err.message);
+                }
+
+                // 创建视频元素
+                const video = document.createElement('video');
+                video.preload = 'auto';
+                video.muted = true;
+                video.playsInline = true;
+                // 不添加到 DOM 以避免干扰
+                
+                // 创建 Object URL
+                const videoUrl = URL.createObjectURL(file);
+                
+                // 等待视频元数据加载
+                await new Promise((resolve, reject) => {
+                    video.onloadedmetadata = () => resolve();
+                    video.onerror = (e) => reject(new Error('视频加载失败，可能格式不支持'));
+                    video.src = videoUrl;
+                    // 超时处理
+                    setTimeout(() => reject(new Error('视频元数据加载超时')), 15000);
+                });
+
+                // 获取视频信息
+                const videoDuration = video.duration;
+                const videoWidth = video.videoWidth;
+                const videoHeight = video.videoHeight;
+                
+                if (videoWidth === 0 || videoHeight === 0) {
+                    throw new Error('无法获取视频尺寸');
+                }
+
+                // 计算实际使用时长 (限制最大时长)
+                const usedDuration = Math.min(videoDuration, maxDurationSec);
+                // 计算帧间隔
+                const frameInterval = 1 / fps;
+                // 总帧数 = 时长 * fps，向下取整，至少1帧
+                let totalFrames = Math.max(1, Math.floor(usedDuration * fps));
+                // 限制总帧数防止内存爆炸 (最多300帧)
+                const MAX_FRAMES = 300;
+                if (totalFrames > MAX_FRAMES) {
+                    totalFrames = MAX_FRAMES;
+                }
+
+                // 计算输出尺寸 (保持宽高比)
+                let outWidth = videoWidth;
+                let outHeight = videoHeight;
+                if (outWidth > maxWidth) {
+                    outHeight = Math.round((maxWidth / outWidth) * outHeight);
+                    outWidth = maxWidth;
+                }
+                // 确保是偶数尺寸 (某些编码器要求)
+                outWidth = Math.floor(outWidth / 2) * 2;
+                outHeight = Math.floor(outHeight / 2) * 2;
+
+                // 创建 Canvas 用于绘制帧
+                const canvas = document.createElement('canvas');
+                canvas.width = outWidth;
+                canvas.height = outHeight;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+                // 存储帧数据 (Uint8Array RGBA)
+                const frames = [];
+                // 存储每帧的延时 (毫秒) —— APNG 需要
+                const delays = [];
+
+                // 设置视频当前时间为0，确保从头开始 (某些视频可能自动播放)
+                video.currentTime = 0;
+                // 等待 seek 完成
+                await new Promise((resolve) => {
+                    video.onseeked = () => resolve();
+                    // 如果已经是0，seeked 可能不触发？加个短超时
+                    setTimeout(resolve, 500);
+                });
+
+                // 逐帧捕获
+                for (let i = 0; i < totalFrames; i++) {
+                    // 计算当前帧对应的时间点 (秒)
+                    const captureTime = Math.min(i * frameInterval, usedDuration);
+                    // 跳转到指定时间
+                    video.currentTime = captureTime;
+                    
+                    // 等待 seek 完成
+                    await new Promise((resolve) => {
+                        const onSeeked = () => {
+                            video.removeEventListener('seeked', onSeeked);
+                            resolve();
+                        };
+                        video.addEventListener('seeked', onSeeked);
+                        // 超时保护
+                        setTimeout(() => {
+                            video.removeEventListener('seeked', onSeeked);
+                            resolve();
+                        }, 2000);
+                    });
+
+                    // 绘制当前帧到 canvas
+                    ctx.drawImage(video, 0, 0, outWidth, outHeight);
+                    
+                    // 获取像素数据
+                    const imageData = ctx.getImageData(0, 0, outWidth, outHeight);
+                    // 转换为 Uint8Array 并拷贝
+                    const data = new Uint8Array(imageData.data.buffer);
+                    frames.push(data);
+                    
+                    // 计算延时：两帧之间的间隔毫秒数。最后一帧延时稍微给长一点或一样。
+                    // APNG 延时单位是 1/100 秒，但 UPNG 库接受毫秒。
+                    let delayMs = frameInterval * 1000;
+                    // 最后一帧可以给一个稍微合理的延时 (如果视频总长刚好，使用 frameInterval)
+                    // 对于最后一帧，如果 capturedTime 接近 usedDuration，给同样的间隔。
+                    // 确保延时至少 20ms (避免播放过快)
+                    delayMs = Math.max(20, Math.round(delayMs));
+                    delays.push(delayMs);
+
+                    // 更新进度 (每帧)
+                    const progress = Math.round(((i + 1) / totalFrames) * 100);
+                    setStatus(`⏳ 转换中... 已捕获 ${i+1}/${totalFrames} 帧 (${progress}%)`, 'info');
+                }
+
+                // 释放视频 URL
+                URL.revokeObjectURL(videoUrl);
+                
+                // 使用 UPNG 编码为 APNG
+                setStatus(`📦 正在编码 APNG (${totalFrames} 帧)...`, 'info');
+                
+                // UPNG.encode(imgs, w, h, cnum, [dels]) 
+                // 其中 imgs 是 ArrayBuffer 数组，dels 是延时数组(毫秒)
+                // 注意: UPNG 期望每个帧数据是 ArrayBuffer 或 Uint8Array (RGBA)
+                // 这里 frames 是 Uint8Array 数组，UPNG 接受 Uint8Array。
+                // cnum: 0 表示无损 (但 APNG 其实支持 0 表示 lossless? 文档: cnum=0 表示 lossless，但会很大。我们用256色优化？为了保持质量用0)
+                // 对于较大图像，0 可能生成巨大文件。为了平衡，我们使用 cnum=256 (量化) 或者 0。
+                // 但为了清晰，使用 cnum=0 (无损) 对于小尺寸动图可以接受。
+                const cnum = 0; // 无损，支持全彩
+                const apngBuffer = UPNG.encode(frames, outWidth, outHeight, cnum, delays);
+                
+                if (!apngBuffer || apngBuffer.byteLength === 0) {
+                    throw new Error('APNG 编码失败，未生成数据');
+                }
+
+                // 创建 Blob
+                const apngBlob = new Blob([apngBuffer], { type: 'image/apng' });
+                return apngBlob;
+            }
+
+            // 转换按钮点击事件
+            convertBtn.addEventListener('click', async () => {
+                if (!currentFile) {
+                    setStatus('❌ 请先选择 MP4 文件', 'error');
+                    return;
+                }
+
+                // 读取设置
+                let fps = parseFloat(fpsInput.value);
+                let maxWidth = parseInt(widthInput.value, 10);
+                let maxDuration = parseFloat(durationInput.value);
+
+                // 验证设置
+                if (isNaN(fps) || fps < 1 || fps > 30) {
+                    setStatus('⚠️ 帧率请设置在 1-30 之间', 'error');
+                    return;
+                }
+                if (isNaN(maxWidth) || maxWidth < 16 || maxWidth > 1920) {
+                    setStatus('⚠️ 最大宽度请设置在 16-1920 之间', 'error');
+                    return;
+                }
+                if (isNaN(maxDuration) || maxDuration < 0.5 || maxDuration > 30) {
+                    setStatus('⚠️ 时长限制请设置在 0.5-30 秒之间', 'error');
+                    return;
+                }
+
+                // 生成新的转换ID，用于取消旧任务 (但这里没有主动取消机制，跳过)
+                const thisConversionId = ++conversionId;
+
+                // 禁用按钮，显示进度
+                convertBtn.disabled = true;
+                resetBtn.disabled = true;
+                revokeApngUrl();
+
+                setStatus('🚀 开始转换，请稍候... 这可能需要一些时间', 'info');
+
+                try {
+                    // 执行转换
+                    const apngBlob = await convertToAPNG(currentFile, fps, maxWidth, maxDuration);
+                    
+                    // 检查是否被新的转换取消 (简单检查)
+                    if (thisConversionId !== conversionId) {
+                        setStatus('⏹️ 转换已被取消', 'info');
+                        return;
+                    }
+
+                    // 生成下载 URL
+                    if (currentApngUrl) URL.revokeObjectURL(currentApngUrl);
+                    currentApngUrl = URL.createObjectURL(apngBlob);
+                    
+                    // 更新预览和下载链接
+                    apngPreview.src = currentApngUrl;
+                    downloadLink.href = currentApngUrl;
+                    // 根据原文件名生成下载名
+                    const baseName = currentFile.name.replace(/\.[^/.]+$/, '') || 'animation';
+                    downloadLink.download = `${baseName}.png`;
+                    
+                    previewArea.classList.remove('hidden');
+                    
+                    const sizeMB = (apngBlob.size / (1024*1024)).toFixed(2);
+                    setStatus(`✅ 转换成功！APNG 大小: ${sizeMB} MB，可下载或预览。`, 'success');
+                } catch (err) {
+                    console.error(err);
+                    if (thisConversionId === conversionId) {
+                        setStatus(`❌ 转换失败: ${err.message}`, 'error');
+                        revokeApngUrl();
+                    }
+                } finally {
+                    if (thisConversionId === conversionId) {
+                        convertBtn.disabled = false;
+                        resetBtn.disabled = false;
+                    }
+                }
+            });
+
+            // 重置按钮
+            resetBtn.addEventListener('click', () => {
+                resetAll();
+                setStatus('🔄 已重置，请选择新的 MP4 文件', 'info');
+                convertBtn.disabled = true;
+                resetBtn.disabled = false;
+            });
+
+            // 初始状态
+            resetAll();
+            // 但重置时设置了status，我们调整一下
+            setStatus('💡 等待选择 MP4 文件…');
+
+            // 处理可能的拖动? 不必须。
+            // 在页面卸载时释放 URL
+            window.addEventListener('beforeunload', () => {
+                if (currentApngUrl) URL.revokeObjectURL(currentApngUrl);
+            });
+
+        })();
+    </script>
+</body>
+</html>
